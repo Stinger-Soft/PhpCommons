@@ -104,14 +104,14 @@ abstract class Utils {
 	 * @return string The created excerpt
 	 */
 	public static function excerpt($text, $phrase, $radius = 100, $ending = "...") {
-		$phraseLen = strlen($phrase);
+		$phrases = is_array($phrase) ? $phrase : array(
+			$phrase
+		);
+		
+		$phraseLen = strlen(implode(' ', $phrases));
 		if($radius < $phraseLen) {
 			$radius = $phraseLen;
 		}
-		
-		$phrases = is_array($phrase) ? $phrase : array(
-			$phrase 
-		);
 		
 		foreach($phrases as $phrase) {
 			$pos = strpos(strtolower($text), strtolower($phrase));
