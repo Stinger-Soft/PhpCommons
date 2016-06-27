@@ -1,0 +1,34 @@
+<?php
+
+/*
+ * This file is part of the Stinger PHP-Commons package.
+ *
+ * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
+ * (c) Florian Meyer <florian.meyer@stinger-soft.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+namespace StingerSoft\PhpCommons\String;
+
+class UtilsTest extends \PHPUnit_Framework_TestCase {
+
+	public function testStartsWith() {
+		$this->assertTrue(Utils::startsWith('testStartsWith', 'test'));
+		$this->assertTrue(Utils::startsWith('testStartsWith', ''));
+		$this->assertTrue(Utils::startsWith('', ''));
+		$this->assertFalse(Utils::startsWith('testStartsWith', 'With'));
+	}
+
+	public function testEndsWith() {
+		$this->assertTrue(Utils::endsWith('testStartsWith', 'With'));
+		$this->assertTrue(Utils::endsWith('testStartsWith', ''));
+		$this->assertTrue(Utils::endsWith('', ''));
+		$this->assertFalse(Utils::endsWith('testStartsWith', 'test'));
+	}
+
+	public function testCamelize() {
+		$this->assertEquals('handleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', false));
+		$this->assertEquals('HandleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', true));
+	}
+}
