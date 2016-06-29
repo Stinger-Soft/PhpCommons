@@ -24,6 +24,8 @@ abstract class Utils {
 	 * @return boolean
 	 */
 	public static function startsWith($haystack, $needle) {
+		if($needle === null && $haystack === null) return false;
+		if($needle === null && $haystack !== null) return true;
 		return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
 	}
 
@@ -35,6 +37,8 @@ abstract class Utils {
 	 * @return boolean
 	 */
 	public static function endsWith($haystack, $needle) {
+		if($needle === null && $haystack === null) return true;
+		if($needle === null && $haystack !== null) return true;
 		return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
 	}
 
