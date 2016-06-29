@@ -17,6 +17,8 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue(Utils::startsWith('testStartsWith', 'test'));
 		$this->assertTrue(Utils::startsWith('testStartsWith', ''));
 		$this->assertTrue(Utils::startsWith('', ''));
+		$this->assertTrue(Utils::startsWith(null, ''));
+		$this->assertFalse(Utils::startsWith('', null));
 		$this->assertFalse(Utils::startsWith('testStartsWith', 'With'));
 	}
 
@@ -24,11 +26,15 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue(Utils::endsWith('testStartsWith', 'With'));
 		$this->assertTrue(Utils::endsWith('testStartsWith', ''));
 		$this->assertTrue(Utils::endsWith('', ''));
+		$this->assertTrue(Utils::endsWith(null, ''));
+		$this->assertFalse(Utils::endsWith('', null));
 		$this->assertFalse(Utils::endsWith('testStartsWith', 'test'));
 	}
 
 	public function testCamelize() {
 		$this->assertEquals('handleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', false));
+		$this->assertNotEquals('handleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', true));
 		$this->assertEquals('HandleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', true));
+		$this->assertNotEquals('HandleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', false));
 	}
 }
