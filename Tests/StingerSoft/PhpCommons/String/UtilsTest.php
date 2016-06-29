@@ -43,4 +43,17 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('This is an <em>awesome</em> text!', Utils::highlight('This is an awesome text!', 'awe'));
 		$this->assertEquals('This is an awesome text!', Utils::highlight('This is an awesome text!', 'nono'));
 	}
+	
+	public function testExcerpt() {
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', 'slayer', 100, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('slayer', 'metallica'), 100, '...'));
+		$this->assertEquals('...dolor...', Utils::excerpt('Lorem ipsum dolor sit amet', 'dolor', 0, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 100, '...'));
+		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 0, '...'));
+		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 0, '...'));
+		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 10, '...'));
+		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 10, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 20, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 20, '...'));
+	}
 }
