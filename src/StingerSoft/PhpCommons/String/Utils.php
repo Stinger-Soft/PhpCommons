@@ -48,7 +48,7 @@ abstract class Utils {
 	 * @return string
 	 */
 	public static function camelize($input, $separator = '_', $capitalizeFirstCharacter = false) {
-		if(version_compare(PHP_VERSION, '5.5.16') >= 0) {
+		if(version_compare(PHP_VERSION, '5.5.16') >= 0 && !defined('HHVM_VERSION')) {
 			return self::camelizeNewVersion($input, $separator, $capitalizeFirstCharacter);
 		}
 		return self::camelizeOldVersion($input, $separator, $capitalizeFirstCharacter);
