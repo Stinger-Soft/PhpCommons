@@ -11,6 +11,9 @@
  */
 namespace StingerSoft\PhpCommons\Arrays;
 
+/**
+ * Provides helper methods to handle PHP native arrays
+ */
 abstract class Utils {
 
 	/**

@@ -11,6 +11,9 @@
  */
 namespace StingerSoft\PhpCommons\String;
 
+/**
+ * Provides some 'missing' methods to handle strings
+ */
 abstract class Utils {
 
 	/**
@@ -105,7 +108,7 @@ abstract class Utils {
 	 */
 	public static function excerpt($text, $phrase, $radius = 100, $ending = "...") {
 		$phrases = is_array($phrase) ? $phrase : array(
-			$phrase
+			$phrase 
 		);
 		
 		$phraseLen = strlen(implode(' ', $phrases));
