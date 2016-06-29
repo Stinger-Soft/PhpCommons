@@ -6,6 +6,9 @@ cache:
 
 matrix:
   include:
+    - php: 5.4
+      env: COVERALLS=1
+      
     - php: 5.5
       env: COVERALLS=1
 
