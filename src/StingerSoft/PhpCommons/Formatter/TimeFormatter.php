@@ -86,7 +86,7 @@ abstract class TimeFormatter {
 			throw new \InvalidArgumentException('$from must be a \DateTime or an integer!');
 		}
 		
-		if($to == null) {
+		if($to === null) {
 			$to = time();
 		} else if($to instanceof \DateTime) {
 			$to = $to->getTimestamp();

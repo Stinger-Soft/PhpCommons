@@ -33,18 +33,10 @@ class TimeFormatterTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @expectedException \InvalidArgumentException
-	 * @dataProvider validGetRelativeTimeToDataProvider
-	 */
-	public function testGetRelativeTimeDifferenceWithInvalidToValues($toValue) {
-		TimeFormatter::getRelativeTimeDifference(true, $toValue);
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
 	 * @dataProvider invalidGetRelativeTimeFromDataProvider
 	 */
-	public function testGetRelativeTimeDifferenceWithInvalidFromValues($fromValue) {
-		TimeFormatter::getRelativeTimeDifference($fromValue);
+	public function testGetRelativeTimeDifferenceWithInvalidValues($fromValue, $toValue) {
+		TimeFormatter::getRelativeTimeDifference($fromValue, $toValue);
 	}
 
 	public function testGetRelativeTimeDifferenceInSeconds() {
@@ -319,31 +311,38 @@ class TimeFormatterTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($expectedDiff, $diff[0]);
 	}
 
-	public function validGetRelativeTimeToDataProvider() {
-		return array(
-			array(
-				null 
-			),
-			array(
-				time() 
-			),
-			array(
-				new \DateTime() 
-			) 
-		);
-	}
-
 	public function invalidGetRelativeTimeFromDataProvider() {
 		return array(
 			array(
-				true 
+				true, true
 			),
 			array(
-				"test" 
+				null, null
 			),
 			array(
-				new \stdClass() 
-			) 
+				"test", "test" 
+			),
+			array(
+				new \stdClass(), new \stdClass() 
+			), 
+			array(
+				time(), false
+			),
+			array(
+				time(), "test" 
+			),
+			array(
+				time(), new \stdClass() 
+			), 
+			array(
+				new \DateTime(), false
+			),
+			array(
+				new \DateTime(), "test" 
+			),
+			array(
+				new \DateTime(), new \stdClass()
+			),
 		);
 	}
 }
