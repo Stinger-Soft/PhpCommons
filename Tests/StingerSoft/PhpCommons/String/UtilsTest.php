@@ -31,4 +31,10 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('handleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', false));
 		$this->assertEquals('HandleTestresultSuccess', Utils::camelize('handle_testresult_success', '_', true));
 	}
+
+	public function testHighlight() {
+		$this->assertEquals('This is an <em>awesome</em> text!', Utils::highlight('This is an awesome text!', 'awesome'));
+		$this->assertEquals('This is an <em>awesome</em> text!', Utils::highlight('This is an awesome text!', 'awe'));
+		$this->assertEquals('This is an awesome text!', Utils::highlight('This is an awesome text!', 'nono'));
+	}
 }
