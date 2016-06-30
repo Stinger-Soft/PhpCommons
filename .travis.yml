@@ -7,16 +7,16 @@ cache:
 matrix:
   include:
     - php: 5.4
-      env: COVERALLS=1
+      env: COVERALLS=1 PHPVERSION=5.4
       
     - php: 5.5
-      env: COVERALLS=1
+      env: COVERALLS=1 PHPVERSION=5.5
 
     - php: 5.6
-      env: COVERALLS=1
+      env: COVERALLS=1 PHPVERSION=5.6
 
     - php: hhvm
-      env: COVERALLS=0
+      env: COVERALLS=0 PHPVERSION=hhvm
 
 before_install:
   - composer self-update
