@@ -11,6 +11,11 @@
 			"name" : "Florian Meyer",
 			"email" : "florian.meyer@stinger-soft.net",
 			"role" : "Developer"
+		},
+		{
+			"name" : "Oliver Kotte",
+			"email" : "oliver.kotte@stinger-soft.net",
+			"role" : "Developer"
 		}
 	],
 	"autoload" : {
