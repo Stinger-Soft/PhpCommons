@@ -1,6 +1,6 @@
 # PhpCommons
 
-Some common methods to ease the life of anonymous PHP developer
+Some common methods to ease the life of anonymous PHP developers
 
 ## String
 * **startsWith** Tests if a string starts with the specified prefix.
