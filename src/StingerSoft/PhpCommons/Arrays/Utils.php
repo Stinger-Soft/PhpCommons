@@ -57,4 +57,19 @@ abstract class Utils {
 		}
 		return $array;
 	}
+
+	/**
+	 * Creates an array of arrays from the two given arrays.
+	 * If one array is bigger than the other, missing values will be filled up with nulls.
+	 *
+	 * @param array $array1        	
+	 * @param array $array2        	
+	 * @return array[array]
+	 */
+	public static function mergeArrayValues(array $array1, array $array2) {
+		// if(count($array1) != count($array2)) {
+		// throw new \IllegalArgumentException('Arrays must be of the same size');
+		// }
+		return array_map(null, $array1, $array2);
+	}
 }

@@ -13,73 +13,122 @@ namespace StingerSoft\PhpCommons\Arrays;
 
 class UtilsTest extends \PHPUnit_Framework_TestCase {
 
-	public function testInsertElement(){
+	public function testInsertElement() {
 		$array = array(
 			1,
 			2,
 			4,
-			5
+			5 
 		);
 		$expectedArray = array(
 			1,
 			2,
 			3,
 			4,
-			5
+			5 
 		);
 		$result = Utils::insertElement($array, 3, 2);
 		$this->assertEquals($expectedArray, $result);
 	}
-	
-	public function testInsertElementWrongPosition(){
+
+	public function testInsertElementWrongPosition() {
 		$array = array(
 			1,
 			2,
 			4,
-			5
+			5 
 		);
 		$expectedArray = array(
 			1,
 			2,
 			4,
 			5,
-			3
+			3 
 		);
 		$result = Utils::insertElement($array, 3, 8);
 		$this->assertEquals($expectedArray, $result);
 	}
-	
-	public function testInsertElementAssoc(){
+
+	public function testInsertElementAssoc() {
 		$array = array(
 			"one" => 1,
 			"two" => 2,
 			"four" => 4,
-			"five" => 5
+			"five" => 5 
 		);
 		$expectedArray = array(
 			"one" => 1,
 			"two" => 2,
 			"three" => 3,
 			"four" => 4,
-			"five" => 5
+			"five" => 5 
 		);
-		$result = Utils::insertElement($array, array("three" => 3), 2);
+		$result = Utils::insertElement($array, array(
+			"three" => 3 
+		), 2);
 		$this->assertEquals($expectedArray, $result);
 	}
-	
-	
-	public function testRemoveByValue(){
+
+	public function testRemoveByValue() {
 		$array = array(
 			'test1',
 			'test2',
 			'test3',
-			'test4',
+			'test4' 
 		);
 		$result = Utils::removeElementByValue($array, 'test2');
-		$this->assertCount(count($array)-1, $result);
+		$this->assertCount(count($array) - 1, $result);
 		$this->assertNotContains('test2', $result);
 		
 		$result = Utils::removeElementByValue($array, 'test99999999');
 		$this->assertCount(count($array), $result);
+	}
+
+	public function testMergeArrayValues() {
+		$array1 = array(
+			'a',
+			'b',
+			'c' 
+		);
+		$array2 = array(
+			1,
+			2,
+			3 
+		);
+		
+		$expected = array(
+			array('a', 1),
+			array('b', 2),
+			array('c', 3),
+		);
+		
+		$result = Utils::mergeArrayValues($array1, $array2);
+		
+		$this->assertEquals($expected, $result);
+	}
+	
+	public function testMergeArrayValuesWithDifferentSize(){
+		$array1 = array(
+			'a',
+			'b',
+		);
+		$array2 = array(
+			1,
+			2,
+			3
+		);
+		
+		$expected = array(
+			array('a', 1),
+			array('b', 2),
+			array(
+				null,
+				3
+			),
+		);
+		
+		$result = Utils::mergeArrayValues($array1, $array2);
+		
+		$this->assertEquals($expected, $result);
 	}
 }
