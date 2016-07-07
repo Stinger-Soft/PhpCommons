@@ -67,9 +67,6 @@ abstract class Utils {
 	 * @return array[array]
 	 */
 	public static function mergeArrayValues(array $array1, array $array2) {
-		// if(count($array1) != count($array2)) {
-		// throw new \IllegalArgumentException('Arrays must be of the same size');
-		// }
 		return array_map(null, $array1, $array2);
 	}
 }
