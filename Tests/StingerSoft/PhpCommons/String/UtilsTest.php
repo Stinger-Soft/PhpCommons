@@ -56,4 +56,18 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 20, '...'));
 		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 20, '...'));
 	}
+	
+	public function testTruncate() {
+		$this->assertEquals('Lorem ipsum dolor...', Utils::truncate('Lorem ipsum dolor sit amet', 0, 20, '...'));
+		$this->assertEquals('Lorem ipsum dolor###', Utils::truncate('Lorem ipsum dolor sit amet', 0, 20, '###'));
+		$this->assertEquals('Lorem ipsum dolor...', Utils::truncate('Lorem ipsum dolor sit amet', 0, 20));
+		$this->assertEquals('orem ipsum dolor s...', Utils::truncate('Lorem ipsum dolor sit amet', 1, 21));
+		$this->assertEquals('orem ipsum dolor ...', Utils::truncate('Lorem ipsum dolor sit amet', 1, 20));
+		$this->assertEquals('Lorem ipsum dolor sit amet l...', Utils::truncate('Lorem ipsum dolor sit amet lorem ipsum dolor sit amet'));
+		$this->assertEquals('orem ipsum dolor sit amet lo...', Utils::truncate('Lorem ipsum dolor sit amet lorem ipsum dolor sit amet', 1));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::truncate('Lorem ipsum dolor sit amet'));
+		$this->assertEquals('', Utils::truncate(''));
+		$this->assertEquals('', Utils::truncate(null));
+		$this->assertEquals('orem ipsum dolor sit amet', Utils::truncate('Lorem ipsum dolor sit amet', 1));
+	}
 }

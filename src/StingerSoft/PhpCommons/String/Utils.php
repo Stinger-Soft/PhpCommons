@@ -24,8 +24,10 @@ abstract class Utils {
 	 * @return boolean
 	 */
 	public static function startsWith($haystack, $needle) {
-		if($needle === null && $haystack === null) return false;
-		if($needle === null && $haystack !== null) return true;
+		if($needle === null && $haystack === null)
+			return false;
+		if($needle === null && $haystack !== null)
+			return true;
 		return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
 	}
 
@@ -37,8 +39,10 @@ abstract class Utils {
 	 * @return boolean
 	 */
 	public static function endsWith($haystack, $needle) {
-		if($needle === null && $haystack === null) return true;
-		if($needle === null && $haystack !== null) return true;
+		if($needle === null && $haystack === null)
+			return true;
+		if($needle === null && $haystack !== null)
+			return true;
 		return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
 	}
 
@@ -165,5 +169,24 @@ abstract class Utils {
 	 */
 	public static function highlight($string, $keyword, $preHighlight = '<em>', $postHightlight = '</em>') {
 		return preg_replace("/\p{L}*?" . preg_quote($keyword) . "\p{L}*/ui", $preHighlight . "$0" . $postHightlight, $string);
+	}
+
+	/**
+	 *
+	 * Get truncated string with specified width.
+	 * 
+	 * @param string $value
+	 *        	The string being truncated
+	 * @param number $start
+	 *        	The start position offset. Number of characters from the beginning of string. (First character is 0)
+	 * @param number $max
+	 *        	The width of the desired trim
+	 * @param string $truncationSymbol
+	 *        	A string that is added to the end of string when string is truncated
+	 * @return string
+	 */
+	public static function truncate($value, $start = 0, $max = 31, $truncationSymbol = '...') {
+		$valueEncoding = mb_detect_encoding($value, 'auto', true);
+		return mb_strimwidth($value, $start, $max, $truncationSymbol, $valueEncoding);
 	}
 }
