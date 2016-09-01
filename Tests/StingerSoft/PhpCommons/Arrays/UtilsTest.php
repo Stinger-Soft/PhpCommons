@@ -131,4 +131,25 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals($expected, $result);
 	}
+	
+	
+	public function testGetPrevKey() {
+		$testArray = array(
+			'a' => 'A',
+			'b' => 'B',
+		);
+		$this->assertEquals('a', Utils::getPrevKey('b', $testArray));
+		$this->assertEquals(false, Utils::getPrevKey('a', $testArray));
+		$this->assertEquals(false, Utils::getPrevKey('c', $testArray));
+	}
+	
+	public function testGetNextKey() {
+		$testArray = array(
+			'a' => 'A',
+			'b' => 'B',
+		);
+		$this->assertEquals('b', Utils::getNextKey('a', $testArray));
+		$this->assertEquals(false, Utils::getNextKey('b', $testArray));
+		$this->assertEquals(false, Utils::getNextKey('c', $testArray));
+	}
 }

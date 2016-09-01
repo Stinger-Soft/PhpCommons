@@ -20,5 +20,10 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertGreaterThan(0, Utils::intcmp(1, 0));
 		$this->assertLessThan(0, Utils::intcmp(0, 1));
 		$this->assertEquals(0, Utils::intcmp(0, 0));
+		
+		$this->assertGreaterThan(0, Utils::intcmp(1, null));
+		$this->assertLessThan(0, Utils::intcmp(null, 1));
+		$this->assertEquals(0, Utils::intcmp(null, null));
+		
 	}
 }

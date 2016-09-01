@@ -69,4 +69,34 @@ abstract class Utils {
 	public static function mergeArrayValues(array $array1, array $array2) {
 		return array_map(null, $array1, $array2);
 	}
+
+	/**
+	 * Returns the previous key from an array
+	 *
+	 * @param mixed $key        	
+	 * @param array $array        	
+	 * @return boolean|mixed previous key or false if no previous key is available
+	 */
+	public static function getPrevKey($key, array $array) {
+		$keys = array_keys($array);
+		$found_index = array_search($key, $keys);
+		if($found_index === false || $found_index === 0)
+			return false;
+		return $keys[$found_index - 1];
+	}
+
+	/**
+	 * Returns the next key from an array
+	 *
+	 * @param mixed $key        	
+	 * @param array $array        	
+	 * @return boolean|mixed next key or false if no next key is available
+	 */
+	public static function getNextKey($key, array $array) {
+		$keys = array_keys($array);
+		$found_index = array_search($key, $keys);
+		if($found_index === false || $found_index === count($keys))
+			return false;
+		return $keys[$found_index + 1];
+	}
 }
