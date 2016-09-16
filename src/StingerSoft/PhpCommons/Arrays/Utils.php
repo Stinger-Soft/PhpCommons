@@ -95,7 +95,7 @@ abstract class Utils {
 	public static function getNextKey($key, array $array) {
 		$keys = array_keys($array);
 		$found_index = array_search($key, $keys);
-		if($found_index === false || $found_index === count($keys))
+		if($found_index === false || $found_index + 1 === count($keys))
 			return false;
 		return $keys[$found_index + 1];
 	}
