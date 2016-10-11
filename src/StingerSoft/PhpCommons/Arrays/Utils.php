@@ -99,4 +99,36 @@ abstract class Utils {
 			return false;
 		return $keys[$found_index + 1];
 	}
+
+	/**
+	 * Applies a callback on a part of a multidimensional array defined by its path (ie keys)
+	 *
+	 * @param array $array
+	 *        	The array the callable should be applied on
+	 * @param array $path
+	 *        	An array of keys representing the path to the targeted element
+	 * @param callable $callback
+	 *        	Callback to apply on the targeted element. The targeted subarray and the last key of the path will be passend to this delegate
+	 * @return array|null Returns the modified array or null if no element could by found specified by the path
+	 */
+	public static function applyCallbackByPath(array &$array, array $path, $callback) {
+		$i = 0;
+		while($i < count($path) - 1) {
+			$piece = $path[$i];
+			if(!is_array($array) || !array_key_exists($piece, $array)) {
+				return null;
+			}
+			$array = &$array[$piece];
+			$i++;
+		}
+		$piece = end($path);
+		if(!is_array($array) || !array_key_exists($piece, $array)) {
+			return null;
+		}
+		call_user_func_array($callback, array(
+			&$array,
+			$piece 
+		));
+		return $array;
+	}
 }
