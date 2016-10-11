@@ -217,5 +217,14 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 			'test' 
 		), $uppercaseDelegate);
 		$this->assertNull($result);
+		
+		// Non existing value
+		$result = Utils::applyCallbackByPath($testArray, array(
+			'siblings',
+			'left',
+			'test',
+			'test',
+		), $uppercaseDelegate);
+		$this->assertNull($result);
 	}
 }
