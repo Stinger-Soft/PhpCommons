@@ -174,7 +174,7 @@ abstract class Utils {
 	/**
 	 *
 	 * Get truncated string with specified width.
-	 * 
+	 *
 	 * @param string $value
 	 *        	The string being truncated
 	 * @param number $start
@@ -188,5 +188,21 @@ abstract class Utils {
 	public static function truncate($value, $start = 0, $max = 31, $truncationSymbol = '...') {
 		$valueEncoding = mb_detect_encoding($value, 'auto', true);
 		return mb_strimwidth($value, $start, $max, $truncationSymbol, $valueEncoding);
+	}
+
+	/**
+	 * Removes duplicate values from a string array by using a case insensitive comparator
+	 *
+	 * @link http://www.php.net/manual/en/function.array-unique.php#78801
+	 * @author mnbayazit
+	 *        
+	 * @param string[] $array        	
+	 * @param bool $preserveKeys        	
+	 * @return string[]
+	 */
+	public static function removeDuplicatesByComparator(array $array, $preserveKeys = true) {
+		$lowered = array_map('strtolower', $array);
+		$result = array_intersect_key($array, array_unique($lowered));
+		return $preserveKeys ? $result : array_values($result);
 	}
 }
