@@ -12,6 +12,10 @@ Some common methods to ease the life of anonymous PHP developers
 ## Array
 * **insertElement** Adds an element into a array on the given position without replacing the old entry
 * **removeElementByValue** Removes the given element from the array
+* **mergeArrayValues** Creates an array of arrays from the two given arrays.
+* **getPrevKey** Returns the previous key from an array
+* **getNextKey** Returns the next key from an array
+* **applyCallbackByPath**  Applies a callback on a part of a multidimensional array defined by its path (i.e. keys)
 
 ## Formatter
 
