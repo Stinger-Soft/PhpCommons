@@ -174,7 +174,7 @@ abstract class Utils {
 	/**
 	 *
 	 * Get truncated string with specified width.
-	 *
+	 * 
 	 * @param string $value
 	 *        	The string being truncated
 	 * @param number $start
@@ -191,18 +191,28 @@ abstract class Utils {
 	}
 
 	/**
-	 * Removes duplicate values from a string array by using a case insensitive comparator
+	 * Get an integer based hash code of the given string.
 	 *
-	 * @link http://www.php.net/manual/en/function.array-unique.php#78801
-	 * @author mnbayazit
-	 *        
-	 * @param string[] $array        	
-	 * @param bool $preserveKeys        	
-	 * @return string[]
+	 * @param string $string the string to be hashed
+	 * @return int the hash code of the given string
 	 */
-	public static function removeDuplicatesByComparator(array $array, $preserveKeys = true) {
-		$lowered = array_map('strtolower', $array);
-		$result = array_intersect_key($array, array_unique($lowered));
-		return $preserveKeys ? $result : array_values($result);
+	public static function hashCode($string) {
+		// Code from https://stackoverflow.com/a/40688976/3918483
+		$hash = 0;
+		if(!is_string($string)) {
+			return $hash;
+		}
+
+		$len = mb_strlen($string, 'UTF-8');
+		if($len === 0) {
+			return $hash;
+		}
+		for($i = 0; $i < $len; $i++) {
+			$c = mb_substr($string, $i, 1, 'UTF-8');
+			$cc = unpack('V', iconv('UTF-8', 'UCS-4LE', $c))[1];
+			$hash = (($hash << 5) - $hash) + $cc;
+			$hash &= $hash; // 16bit > 32bit
+		}
+		return $hash;
 	}
 }

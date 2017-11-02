@@ -43,44 +43,20 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('This is an <em>awesome</em> text!', Utils::highlight('This is an awesome text!', 'awe'));
 		$this->assertEquals('This is an awesome text!', Utils::highlight('This is an awesome text!', 'nono'));
 	}
-
+	
 	public function testExcerpt() {
 		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', 'slayer', 100, '...'));
-		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'slayer',
-			'metallica' 
-		), 100, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('slayer', 'metallica'), 100, '...'));
 		$this->assertEquals('...dolor...', Utils::excerpt('Lorem ipsum dolor sit amet', 'dolor', 0, '...'));
-		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'Lorem',
-			'dolor' 
-		), 100, '...'));
-		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'Lorem',
-			'dolor' 
-		), 0, '...'));
-		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'dolor',
-			'Lorem' 
-		), 0, '...'));
-		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'Lorem',
-			'dolor' 
-		), 10, '...'));
-		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'dolor',
-			'Lorem' 
-		), 10, '...'));
-		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'Lorem',
-			'dolor' 
-		), 20, '...'));
-		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array(
-			'dolor',
-			'Lorem' 
-		), 20, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 100, '...'));
+		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 0, '...'));
+		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 0, '...'));
+		$this->assertEquals('Lorem ipsum...', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 10, '...'));
+		$this->assertEquals('...dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 10, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('Lorem', 'dolor'), 20, '...'));
+		$this->assertEquals('Lorem ipsum dolor sit amet', Utils::excerpt('Lorem ipsum dolor sit amet', array('dolor', 'Lorem'), 20, '...'));
 	}
-
+	
 	public function testTruncate() {
 		$this->assertEquals('Lorem ipsum dolor...', Utils::truncate('Lorem ipsum dolor sit amet', 0, 20, '...'));
 		$this->assertEquals('Lorem ipsum dolor###', Utils::truncate('Lorem ipsum dolor sit amet', 0, 20, '###'));
@@ -95,24 +71,15 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('orem ipsum dolor sit amet', Utils::truncate('Lorem ipsum dolor sit amet', 1));
 	}
 
-	public function testRemoveDuplicatesByComparator() {
-		$test = array(
-			'a',
-			'b',
-			'A',
-			'c' 
-		);
-		$result = array(
-			'a',
-			'b',
-			'c' 
-		);
-		$this->assertEquals($result, Utils::removeDuplicatesByComparator($test, false));
-		$result = array(
-			0 => 'a',
-			1 => 'b',
-			3 => 'c' 
-		);
-		$this->assertEquals($result, Utils::removeDuplicatesByComparator($test, true));
+	public function testHashCode() {
+		$this->assertEquals(0, Utils::hashCode(null));
+		$this->assertEquals(0, Utils::hashCode(''));
+		$this->assertEquals(0, Utils::hashCode(false));
+		$this->assertEquals(0, Utils::hashCode(1));
+		$this->assertEquals(0, Utils::hashCode(1.0));
+		$this->assertEquals(0, Utils::hashCode(array()));
+		$this->assertEquals(0, Utils::hashCode(new \stdClass()));
+
+		$this->assertEquals(61778821608020612,Utils::hashCode('Hello World'));
 	}
 }
