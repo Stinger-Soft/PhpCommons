@@ -191,9 +191,9 @@ class TimeFormatterTest extends \PHPUnit_Framework_TestCase {
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_DAYS, 6);
 
 		//Summertime
-		$from = \DateTime::createFromFormat('Y-m-d', '2019-04-04');
+		$from = \DateTime::createFromFormat('Y-m-d', '2019-04-04', new \DateTimeZone('Europe/Berlin'));
 		$from->sub(new \DateInterval('P7D'));
-		$to = \DateTime::createFromFormat('Y-m-d', '2019-04-04');
+		$to = \DateTime::createFromFormat('Y-m-d', '2019-04-04', new \DateTimeZone('Europe/Berlin'));
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_DAYS, 7);
 
 	}
