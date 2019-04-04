@@ -209,7 +209,6 @@ class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testAlreadyRegisteredObjectSkipping() {
-		HashCodeBuilder::setDebug(true);
 		$a = new CyclicTestObject();
 		$b = new CyclicTestObject();
 		$a->setObject($b);
