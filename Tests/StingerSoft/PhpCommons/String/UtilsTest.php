@@ -70,4 +70,16 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('', Utils::truncate(null));
 		$this->assertEquals('orem ipsum dolor sit amet', Utils::truncate('Lorem ipsum dolor sit amet', 1));
 	}
+
+	public function testHashCode() {
+		$this->assertEquals(0, Utils::hashCode(null));
+		$this->assertEquals(0, Utils::hashCode(''));
+		$this->assertEquals(0, Utils::hashCode(false));
+		$this->assertEquals(0, Utils::hashCode(1));
+		$this->assertEquals(0, Utils::hashCode(1.0));
+		$this->assertEquals(0, Utils::hashCode(array()));
+		$this->assertEquals(0, Utils::hashCode(new \stdClass()));
+
+		$this->assertEquals(61778821608020612,Utils::hashCode('Hello World'));
+	}
 }

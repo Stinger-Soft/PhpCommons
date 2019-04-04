@@ -69,4 +69,66 @@ abstract class Utils {
 	public static function mergeArrayValues(array $array1, array $array2) {
 		return array_map(null, $array1, $array2);
 	}
+
+	/**
+	 * Returns the previous key from an array
+	 *
+	 * @param mixed $key        	
+	 * @param array $array        	
+	 * @return boolean|mixed previous key or false if no previous key is available
+	 */
+	public static function getPrevKey($key, array $array) {
+		$keys = array_keys($array);
+		$found_index = array_search($key, $keys);
+		if($found_index === false || $found_index === 0)
+			return false;
+		return $keys[$found_index - 1];
+	}
+
+	/**
+	 * Returns the next key from an array
+	 *
+	 * @param mixed $key        	
+	 * @param array $array        	
+	 * @return boolean|mixed next key or false if no next key is available
+	 */
+	public static function getNextKey($key, array $array) {
+		$keys = array_keys($array);
+		$found_index = array_search($key, $keys);
+		if($found_index === false || $found_index + 1 === count($keys))
+			return false;
+		return $keys[$found_index + 1];
+	}
+
+	/**
+	 * Applies a callback on a part of a multidimensional array defined by its path (ie keys)
+	 *
+	 * @param array $array
+	 *        	The array the callable should be applied on
+	 * @param array $path
+	 *        	An array of keys representing the path to the targeted element
+	 * @param callable $callback
+	 *        	Callback to apply on the targeted element. The targeted subarray and the last key of the path will be passend to this delegate
+	 * @return array|null Returns the modified array or null if no element could by found specified by the path
+	 */
+	public static function applyCallbackByPath(array &$array, array $path, $callback) {
+		$i = 0;
+		while($i < count($path) - 1) {
+			$piece = $path[$i];
+			if(!is_array($array) || !array_key_exists($piece, $array)) {
+				return null;
+			}
+			$array = &$array[$piece];
+			$i++;
+		}
+		$piece = end($path);
+		if(!is_array($array) || !array_key_exists($piece, $array)) {
+			return null;
+		}
+		call_user_func_array($callback, array(
+			&$array,
+			$piece 
+		));
+		return $array;
+	}
 }

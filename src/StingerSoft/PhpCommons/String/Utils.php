@@ -189,4 +189,30 @@ abstract class Utils {
 		$valueEncoding = mb_detect_encoding($value, 'auto', true);
 		return mb_strimwidth($value, $start, $max, $truncationSymbol, $valueEncoding);
 	}
+
+	/**
+	 * Get an integer based hash code of the given string.
+	 *
+	 * @param string $string the string to be hashed
+	 * @return int the hash code of the given string
+	 */
+	public static function hashCode($string) {
+		// Code from https://stackoverflow.com/a/40688976/3918483
+		$hash = 0;
+		if(!is_string($string)) {
+			return $hash;
+		}
+
+		$len = mb_strlen($string, 'UTF-8');
+		if($len === 0) {
+			return $hash;
+		}
+		for($i = 0; $i < $len; $i++) {
+			$c = mb_substr($string, $i, 1, 'UTF-8');
+			$cc = unpack('V', iconv('UTF-8', 'UCS-4LE', $c))[1];
+			$hash = (($hash << 5) - $hash) + $cc;
+			$hash &= $hash; // 16bit > 32bit
+		}
+		return $hash;
+	}
 }

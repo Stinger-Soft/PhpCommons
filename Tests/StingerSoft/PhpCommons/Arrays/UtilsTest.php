@@ -97,38 +97,134 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		);
 		
 		$expected = array(
-			array('a', 1),
-			array('b', 2),
-			array('c', 3),
+			array(
+				'a',
+				1 
+			),
+			array(
+				'b',
+				2 
+			),
+			array(
+				'c',
+				3 
+			) 
 		);
 		
 		$result = Utils::mergeArrayValues($array1, $array2);
 		
 		$this->assertEquals($expected, $result);
 	}
-	
-	public function testMergeArrayValuesWithDifferentSize(){
+
+	public function testMergeArrayValuesWithDifferentSize() {
 		$array1 = array(
 			'a',
-			'b',
+			'b' 
 		);
 		$array2 = array(
 			1,
 			2,
-			3
+			3 
 		);
 		
 		$expected = array(
-			array('a', 1),
-			array('b', 2),
+			array(
+				'a',
+				1 
+			),
+			array(
+				'b',
+				2 
+			),
 			array(
 				null,
-				3
-			),
+				3 
+			) 
 		);
 		
 		$result = Utils::mergeArrayValues($array1, $array2);
 		
 		$this->assertEquals($expected, $result);
+	}
+
+	public function testGetPrevKey() {
+		$testArray = array(
+			'a' => 'A',
+			'b' => 'B' 
+		);
+		$this->assertEquals('a', Utils::getPrevKey('b', $testArray));
+		$this->assertEquals(false, Utils::getPrevKey('a', $testArray));
+		$this->assertEquals(false, Utils::getPrevKey('c', $testArray));
+	}
+
+	public function testGetNextKey() {
+		$testArray = array(
+			'a' => 'A',
+			'b' => 'B' 
+		);
+		$this->assertEquals('b', Utils::getNextKey('a', $testArray));
+		$this->assertEquals(false, Utils::getNextKey('b', $testArray));
+		$this->assertEquals(false, Utils::getNextKey('c', $testArray));
+	}
+
+	public function testApplyCallbackByPath() {
+		$testArray = array(
+			'a' => 'A',
+			'b' => 'B',
+			'children' => array(
+				'test1',
+				'test2',
+				'test3' 
+			),
+			'siblings' => array(
+				'left' => 'sister',
+				'right' => 'brother' 
+			) 
+		);
+		
+		$unsetDelegate = function (&$array, $key) {
+			unset($array[$key]);
+		};
+		
+		$uppercaseDelegate = function (&$array, $key) {
+			$array[$key] = strtoupper($array[$key]);
+		};
+		
+		// remove item
+		Utils::applyCallbackByPath($testArray, array(
+			'a' 
+		), $unsetDelegate);
+		$this->assertArrayNotHasKey('a', $testArray);
+		
+		// set uppercase on value
+		Utils::applyCallbackByPath($testArray, array(
+			'siblings',
+			'left' 
+		), $uppercaseDelegate);
+		$this->assertEquals($testArray['siblings']['left'], 'SISTER');
+		
+		// Non existing value
+		$result = Utils::applyCallbackByPath($testArray, array(
+			'siblings',
+			'lefty' 
+		), $uppercaseDelegate);
+		$this->assertNull($result);
+		
+		// Non existing value
+		$result = Utils::applyCallbackByPath($testArray, array(
+			'siblings',
+			'left',
+			'test' 
+		), $uppercaseDelegate);
+		$this->assertNull($result);
+		
+		// Non existing value
+		$result = Utils::applyCallbackByPath($testArray, array(
+			'siblings',
+			'left',
+			'test',
+			'test',
+		), $uppercaseDelegate);
+		$this->assertNull($result);
 	}
 }
