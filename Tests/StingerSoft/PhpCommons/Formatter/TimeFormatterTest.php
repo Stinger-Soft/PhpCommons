@@ -189,6 +189,13 @@ class TimeFormatterTest extends \PHPUnit_Framework_TestCase {
 		$from->sub(new \DateInterval('P6D'));
 		$to = new \DateTime();
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_DAYS, 6);
+
+		//Summertime
+		$from = \DateTime::createFromFormat('Y-m-d', '2019-04-04');
+		$from->sub(new \DateInterval('P7D'));
+		$to = \DateTime::createFromFormat('Y-m-d', '2019-04-04');
+		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_DAYS, 7);
+
 	}
 
 	public function testGetRelativeTimeDifferenceInWeeks() {
@@ -209,23 +216,23 @@ class TimeFormatterTest extends \PHPUnit_Framework_TestCase {
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_WEEKS, 4);
 		
 		$from = new \DateTime();
-		$from->sub(new \DateInterval('P7D'));
+		$from->sub(new \DateInterval('P7DT1H'));
 		$to = null;
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_WEEKS, 1);
 		
-		$from = new \DateTime();
+		$from = \DateTime::createFromFormat('Y-m-d', '2019-07-01');
 		$from->sub(new \DateInterval('P7D'));
-		$to = new \DateTime();
+		$to = \DateTime::createFromFormat('Y-m-d', '2019-07-01');;
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_WEEKS, 1);
 		
 		$from = new \DateTime();
 		$from->sub(new \DateInterval('P29D'));
 		$to = null;
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_WEEKS, 4);
-		
-		$from = new \DateTime();
+
+		$from = \DateTime::createFromFormat('Y-m-d', '2019-07-01');
 		$from->sub(new \DateInterval('P29D'));
-		$to = new \DateTime();
+		$to = \DateTime::createFromFormat('Y-m-d', '2019-07-01');;
 		$this->validateDiff(TimeFormatter::getRelativeTimeDifference($from, $to), TimeFormatter::UNIT_WEEKS, 4);
 	}
 
