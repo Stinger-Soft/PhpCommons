@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
   * This file is part of the Stinger PHP-Commons package.
  *
@@ -11,132 +13,159 @@
 
 namespace StingerSoft\PhpCommons\Builder;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use stdClass;
 use StingerSoft\PhpCommons\String\Utils;
 
-class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
+class HashCodeBuilderTest extends TestCase {
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage HashCodeBuilder requires a non zero initial value
-	 */
-	public function testConstructorExZeroFirst() {
+	public function testConstructorExZeroFirst(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('HashCodeBuilder requires a non zero initial value');
 		new HashCodeBuilder(0, 0);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage HashCodeBuilder requires an odd initial value
-	 */
-	public function testConstructorExEvenFirst() {
+	public function testConstructorExEvenFirst(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('HashCodeBuilder requires an odd initial value');
 		new HashCodeBuilder(2, 3);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage HashCodeBuilder requires a non zero multiplier
-	 */
-	public function testConstructorExZeroSecond() {
+	public function testConstructorExZeroSecond(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('HashCodeBuilder requires a non zero multiplier');
 		new HashCodeBuilder(3, 0);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage HashCodeBuilder requires an odd multiplier
-	 */
-	public function testConstructorExEvenSecond() {
+	public function testConstructorExEvenSecond(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('HashCodeBuilder requires an odd multiplier');
 		new HashCodeBuilder(3, 2);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage HashCodeBuilder requires an odd initial value
-	 */
-	public function testConstructorExEvenNegative() {
+	public function testConstructorExEvenNegative(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('HashCodeBuilder requires an odd initial value');
 		new HashCodeBuilder(-2, -2);
 	}
 
-	public function testReflectionHashCode() {
-		$this->assertEquals(17 * 37, HashCodeBuilder::reflectionHashCode(new TestObject((int)0)));
-		$this->assertEquals(17 * 37 + 123456, HashCodeBuilder::reflectionHashCode(new TestObject((int)123456)));
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testReflectionHashCode(): void {
+		$this->assertEquals(17 * 37, HashCodeBuilder::reflectionHashCode(new TestObject(0)));
+		$this->assertEquals(17 * 37 + 123456, HashCodeBuilder::reflectionHashCode(new TestObject(123456)));
 	}
 
-	public function testReflectionHierarchyHashCode() {
-		$this->assertEquals((17 * 37) * 37, HashCodeBuilder::reflectionHashCode(new TestSubObject((int)0, (int)0)));
-		$this->assertEquals((17 * 37 + 7890) * 37, HashCodeBuilder::reflectionHashCode(new TestSubObject((int)7890, (int)0)));
-		$this->assertEquals((17 * 37 + 7890) * 37 + 123456, HashCodeBuilder::reflectionHashCode(new TestSubObject((int)7890, (int)123456)));
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testReflectionHierarchyHashCode(): void {
+		$this->assertEquals((17 * 37) * 37, HashCodeBuilder::reflectionHashCode(new TestSubObject(0, 0)));
+		$this->assertEquals((17 * 37 + 7890) * 37, HashCodeBuilder::reflectionHashCode(new TestSubObject(7890, 0)));
+		$this->assertEquals((17 * 37 + 7890) * 37 + 123456, HashCodeBuilder::reflectionHashCode(new TestSubObject(7890, 123456)));
 	}
 
-	public function testObject() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObject(): void {
 		$obj = null;
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->append($obj)->toHashCode());
-		$obj = new \stdClass();
+		$obj = new stdClass();
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37 + 17, $builder->append($obj)->toHashCode());
 	}
 
-	public function testObjectArray() {
-		$obj = array(null);
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObjectArray(): void {
+		$obj = [null];
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->append($obj)->toHashCode());
-		$obj = array(new \stdClass(), new \stdClass());
+		$obj = [new stdClass(), new stdClass()];
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals((17 * 37 + 17) * 37 + (17 * 37 + 17), $builder->append($obj)->toHashCode());
 	}
 
-	public function testObjectWithoutReflection() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObjectWithoutReflection(): void {
 		$obj = null;
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->appendObject($obj, false)->toHashCode());
-		$obj = new \stdClass();
+		$obj = new stdClass();
 		$splHash = Utils::hashCode(spl_object_hash($obj));
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37 + $splHash, $builder->appendObject($obj, false)->toHashCode());
 	}
 
-	public function testObjectArrayWithoutReflection() {
-		$obj = array(null);
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObjectArrayWithoutReflection(): void {
+		$obj = [null];
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->appendObject($obj, false)->toHashCode());
-		$obj = array(new \stdClass(), new \stdClass());
+		$obj = [new stdClass(), new stdClass()];
 		$splHash[] = Utils::hashCode(spl_object_hash($obj[0]));
 		$splHash[] = Utils::hashCode(spl_object_hash($obj[1]));
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals((17 * 37 + $splHash[0]) * 37 + $splHash[1], $builder->appendObject($obj, false)->toHashCode());
 
-		$obj = array(new \stdClass(), 12);
+		$obj = [new stdClass(), 12];
 		$splHash = Utils::hashCode(spl_object_hash($obj[0]));
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals((17 * 37 + $splHash) * 37 + 12, $builder->appendObject($obj, false)->toHashCode());
 	}
 
-	public function testObjectWithHashCode() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObjectWithHashCode(): void {
 		$obj = new TestObjectWithHashCodeMethod();
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37 + 12, $builder->append($obj)->toHashCode());
 	}
 
-	public function testObjectArrayWithHashCode() {
-		$obj = array(new TestObjectWithHashCodeMethod(), new TestObjectWithHashCodeMethod());
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testObjectArrayWithHashCode(): void {
+		$obj = [new TestObjectWithHashCodeMethod(), new TestObjectWithHashCodeMethod()];
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals((17 * 37 + 12) * 37 + 12, $builder->append($obj)->toHashCode());
 	}
 
-	public function testInt() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testInt(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37, $builder->append((int)0)->toHashCode());
+		$this->assertEquals(17 * 37, $builder->append(0)->toHashCode());
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37 + 123456, $builder->append((int)123456)->toHashCode());
+		$this->assertEquals(17 * 37 + 123456, $builder->append(123456)->toHashCode());
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37 + 5, $builder->append((int)5.5)->toHashCode());
 	}
 
-	public function testIntArray() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testIntArray(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals((17 * 37 + 0) * 37 + 2, $builder->append(array((int)0, (int)2))->toHashCode());
+		$this->assertEquals((17 * 37 + 0) * 37 + 2, $builder->append([0, 2])->toHashCode());
 	}
 
-	public function testBool() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testBool(): void {
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37 + 1, $builder->append(false)->toHashCode());
 		$builder = new HashCodeBuilder(17, 37);
@@ -147,40 +176,55 @@ class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(17 * 37 + 0, $builder->append((bool)1)->toHashCode());
 	}
 
-	public function testBoolArray() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testBoolArray(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals((17 * 37 + 1) * 37 + 0, $builder->append(array(false, true))->toHashCode());
+		$this->assertEquals((17 * 37 + 1) * 37 + 0, $builder->append([false, true])->toHashCode());
 	}
 
-	public function testFloat() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testFloat(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37, $builder->append((float)0.0)->toHashCode());
+		$this->assertEquals(17 * 37, $builder->append(0.0)->toHashCode());
 		$float = 2.3;
 		$builder = new HashCodeBuilder(17, 37);
 		$intVal = unpack('i', pack('f', $float))[1];
 		$this->assertEquals(17 * 37 + $intVal, $builder->append($float)->toHashCode());
 	}
 
-	public function testFloatArray() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testFloatArray(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37, $builder->append(array((float)0.0))->toHashCode());
-		$floats = array(2.3, 1.0);
+		$this->assertEquals(17 * 37, $builder->append([0.0])->toHashCode());
+		$floats = [2.3, 1.0];
 		$builder = new HashCodeBuilder(17, 37);
 		$intVal[0] = unpack('i', pack('f', $floats[0]))[1];
 		$intVal[1] = unpack('i', pack('f', $floats[1]))[1];
 		$this->assertEquals((17 * 37 + $intVal[0]) * 37 + $intVal[1], $builder->append($floats)->toHashCode());
 	}
 
-	public function testDouble() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testDouble(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37, $builder->append((double)0.0)->toHashCode());
-		$double = (double)2.3;
+		$this->assertEquals(17 * 37, $builder->append(0.0)->toHashCode());
+		$double = 2.3;
 		$builder = new HashCodeBuilder(17, 37);
 		$intVal = unpack('i', pack('f', $double))[1];
 		$this->assertEquals(17 * 37 + $intVal, $builder->append($double)->toHashCode());
 	}
 
-	public function testString() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testString(): void {
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->append('')->toHashCode());
 		$string = 'Hello World';
@@ -189,9 +233,12 @@ class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(17 * 37 + $intVal, $builder->append($string)->toHashCode());
 	}
 
-	public function testStringArray() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testStringArray(): void {
 		$builder = new HashCodeBuilder(17, 37);
-		$this->assertEquals(17 * 37, $builder->append(array(''))->toHashCode());
+		$this->assertEquals(17 * 37, $builder->append([''])->toHashCode());
 		$strings[] = 'Hello World';
 		$strings[] = 'Dummy';
 		$builder = new HashCodeBuilder(17, 37);
@@ -201,14 +248,18 @@ class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The object to build a hash code for must not be null
+	 * @throws ReflectionException
 	 */
-	public function testNullObjectWithReflectionAppend() {
+	public function testNullObjectWithReflectionAppend(): void {
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('The object to build a hash code for must not be null');
 		HashCodeBuilder::reflectionHashCode(null);
 	}
 
-	public function testAlreadyRegisteredObjectSkipping() {
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testAlreadyRegisteredObjectSkipping(): void {
 		$a = new CyclicTestObject();
 		$b = new CyclicTestObject();
 		$a->setObject($b);
@@ -220,7 +271,7 @@ class HashCodeBuilderTest extends \PHPUnit_Framework_TestCase {
 
 class TestObjectWithHashCodeMethod {
 
-	public function getHashCode() {
+	public function getHashCode(): int {
 		return 12;
 	}
 }
@@ -240,7 +291,7 @@ class CyclicTestObject {
 	 * @param mixed $object
 	 * @return CyclicTestObject
 	 */
-	public function setObject($object) {
+	public function setObject($object): CyclicTestObject {
 		$this->object = $object;
 		return $this;
 	}
@@ -256,7 +307,7 @@ class TestObject {
 	/**
 	 * @return int
 	 */
-	public function getA() {
+	public function getA(): int {
 		return $this->a;
 	}
 
@@ -264,7 +315,7 @@ class TestObject {
 	 * @param int $a
 	 * @return TestObject
 	 */
-	public function setA($a) {
+	public function setA($a): TestObject {
 		$this->a = $a;
 		return $this;
 	}
@@ -282,7 +333,7 @@ class TestSubObject extends TestObject {
 	/**
 	 * @return int
 	 */
-	public function getB() {
+	public function getB(): int {
 		return $this->b;
 	}
 
@@ -290,7 +341,7 @@ class TestSubObject extends TestObject {
 	 * @param int $b
 	 * @return TestSubObject
 	 */
-	public function setB($b) {
+	public function setB($b): TestSubObject {
 		$this->b = $b;
 		return $this;
 	}
