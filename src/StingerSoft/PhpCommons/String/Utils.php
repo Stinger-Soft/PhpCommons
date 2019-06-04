@@ -192,11 +192,11 @@ abstract class Utils {
 	 *
 	 * @param string|null $value
 	 *            The string being truncated
-	 * @param int    $start
+	 * @param int         $start
 	 *            The start position offset. Number of characters from the beginning of string. (First character is 0)
-	 * @param int    $max
+	 * @param int         $max
 	 *            The width of the desired trim
-	 * @param string $truncationSymbol
+	 * @param string      $truncationSymbol
 	 *            A string that is added to the end of string when string is truncated
 	 * @return string
 	 */
@@ -214,8 +214,7 @@ abstract class Utils {
 	 * @param mixed $string the string to be hashed
 	 * @return int the hash code of the given string
 	 */
-	public
-	static function hashCode($string): int {
+	public static function hashCode($string): int {
 		$h = 0;
 		if(!is_string($string)) {
 			return $h;
@@ -227,8 +226,7 @@ abstract class Utils {
 		return $h;
 	}
 
-	private
-	static function overflow32($v): int {
+	private static function overflow32($v): int {
 		$v %= 4294967296;
 		if($v > 2147483647) {
 			return $v - 4294967296;

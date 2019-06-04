@@ -32,7 +32,7 @@ abstract class ByteFormatter {
 	 *            Locale used to format the result
 	 * @return string A pretty printed memory size
 	 */
-	public static function prettyPrintSize(int $size, int $precision = 2, bool $si = false, ?string $locale = 'en') {
+	public static function prettyPrintSize(int $size, int $precision = 2, bool $si = false, ?string $locale = 'en'): string {
 		$fmt = new NumberFormatter($locale, NumberFormatter::DECIMAL);
 
 		$mod = $si ? 1000 : 1024;
