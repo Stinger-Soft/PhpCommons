@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger PHP-Commons package.
@@ -9,7 +10,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\PhpCommons\Formatter;
+
+use NumberFormatter;
 
 /**
  * Provides methods to handle memory sizes
@@ -19,17 +23,18 @@ abstract class ByteFormatter {
 	/**
 	 * Pretty prints a given memory size
 	 *
-	 * @param integer $size
-	 *        	The memory size in bytes
-	 * @param boolean $si
-	 *        	Use SI prefixes?
-	 * @param string $locale
-	 *        	Locale used to format the result
+	 * @param int         $size
+	 *            The memory size in bytes
+	 * @param int         $precision
+	 * @param bool        $si
+	 *            Use SI prefixes?
+	 * @param string|null $locale
+	 *            Locale used to format the result
 	 * @return string A pretty printed memory size
 	 */
-	public static function prettyPrintSize($size, $precision = 2, $si = false, $locale = 'en') {
-		$fmt = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
-		
+	public static function prettyPrintSize(int $size, int $precision = 2, bool $si = false, ?string $locale = 'en'): string {
+		$fmt = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
 		$mod = $si ? 1000 : 1024;
 		$base = log($size, $mod);
 		$suffixes = null;
@@ -40,7 +45,7 @@ abstract class ByteFormatter {
 				'MB',
 				'GB',
 				'TB',
-				'PB' 
+				'PB',
 			];
 		} else {
 			$suffixes = [
@@ -49,10 +54,10 @@ abstract class ByteFormatter {
 				'MiB',
 				'GiB',
 				'TiB',
-				'PiB' 
+				'PiB',
 			];
 		}
-		
-		return $fmt->format(round(pow($mod, $base - floor($base)), $precision)) . ' ' . $suffixes[floor($base)];
+
+		return $fmt->format(round($mod ** ($base - floor($base)), $precision)) . ' ' . $suffixes[(int)floor($base)];
 	}
 }

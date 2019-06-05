@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
   * This file is part of the Stinger PHP-Commons package.
  *
@@ -11,57 +13,64 @@
 
 namespace StingerSoft\PhpCommons\Builder;
 
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionException;
 use StingerSoft\PhpCommons\String\Utils;
+use Traversable;
 
 class HashCodeBuilder {
 
 	private static $debug = false;
 
-	private static $registry = array();
+	private static $registry = [];
 
+	/** @var int */
 	private $iConstant;
 
+	/** @var int */
 	private $iTotal;
 
-	public function __construct($initialNonZeroOddNumber = 17, $multiplierNonZeroOddNumber = 37) {
+	public function __construct(int $initialNonZeroOddNumber = 17, int $multiplierNonZeroOddNumber = 37) {
 		if($initialNonZeroOddNumber === 0) {
-			throw new \InvalidArgumentException('HashCodeBuilder requires a non zero initial value');
+			throw new InvalidArgumentException('HashCodeBuilder requires a non zero initial value');
 		}
 		if($initialNonZeroOddNumber % 2 === 0) {
-			throw new \InvalidArgumentException('HashCodeBuilder requires an odd initial value');
+			throw new InvalidArgumentException('HashCodeBuilder requires an odd initial value');
 		}
 		if($multiplierNonZeroOddNumber === 0) {
-			throw new \InvalidArgumentException('HashCodeBuilder requires a non zero multiplier');
+			throw new InvalidArgumentException('HashCodeBuilder requires a non zero multiplier');
 		}
 		if($multiplierNonZeroOddNumber % 2 === 0) {
-			throw new \InvalidArgumentException('HashCodeBuilder requires an odd multiplier');
+			throw new InvalidArgumentException('HashCodeBuilder requires an odd multiplier');
 		}
 		$this->iConstant = $multiplierNonZeroOddNumber;
 		$this->iTotal = $initialNonZeroOddNumber;
 	}
 
-	protected static function isRegistered($object, \ReflectionClass $clazz) {
+	protected static function isRegistered($object, ReflectionClass $clazz): bool {
 		return array_key_exists(spl_object_hash($object) . '-' . $clazz->name, self::$registry);
 	}
 
-	protected static function register($object, \ReflectionClass $clazz) {
+	protected static function register($object, ReflectionClass $clazz): void {
 		self::$registry[spl_object_hash($object) . '-' . $clazz->name] = true;
 	}
 
 	/**
 	 * @param $debug bool
 	 */
-	public static function setDebug($debug) {
-		self::$debug = filter_var($debug, FILTER_VALIDATE_BOOLEAN);
+	public static function setDebug(bool $debug): void {
+		self::$debug = $debug;
 	}
 
 	/**
-	 * @param object           $object
-	 * @param \ReflectionClass $clazz
-	 * @param HashCodeBuilder  $builder
-	 * @param string[]         $excludeFields
+	 * @param object          $object
+	 * @param ReflectionClass $clazz
+	 * @param HashCodeBuilder $builder
+	 * @param string[]        $excludeFields
+	 * @throws ReflectionException
 	 */
-	private static function reflectionAppend($object, \ReflectionClass $clazz, $builder, array $excludeFields = array()) {
+	private static function reflectionAppend($object, ReflectionClass $clazz, HashCodeBuilder $builder, array $excludeFields = []): void {
 		if(self::isRegistered($object, $clazz)) {
 			self::log("{$clazz->name} is already registered, skipping!" . PHP_EOL);
 			return;
@@ -69,7 +78,7 @@ class HashCodeBuilder {
 
 		self::register($object, $clazz);
 		$fields = $clazz->getProperties();
-		self::log("{$clazz->name} has the following fields: [" . implode(array_map(function ($field) {
+		self::log("{$clazz->name} has the following fields: [" . implode(array_map(static function ($field) {
 				return $field->name;
 			}, $fields)) . ']' . PHP_EOL);
 		foreach($fields as $field) {
@@ -82,44 +91,57 @@ class HashCodeBuilder {
 	}
 
 	/**
-	 * @param       $object
-	 * @param int   $initialNonZeroOddNumber
-	 * @param int   $multiplierNonZeroOddNumber
-	 * @param bool  $includeParents
-	 * @param array $excludeFields
-	 * @param null  $reflectUpToClass
+	 * @param             $object
+	 * @param int         $initialNonZeroOddNumber
+	 * @param int         $multiplierNonZeroOddNumber
+	 * @param bool        $includeParents
+	 * @param array       $excludeFields
+	 * @param string|null $reflectUpToClass
 	 * @return int
-	 * @throws \InvalidArgumentException in case the given object is null
+	 * @throws InvalidArgumentException in case the given object is null
+	 * @throws ReflectionException
 	 */
-	public static function reflectionHashCode($object, $initialNonZeroOddNumber = 17, $multiplierNonZeroOddNumber = 37,
-											  $includeParents = true, array $excludeFields = array(), $reflectUpToClass = null) {
+	public static function reflectionHashCode($object, int $initialNonZeroOddNumber = 17, int $multiplierNonZeroOddNumber = 37,
+											  $includeParents = true, array $excludeFields = [], $reflectUpToClass = null): int {
 		if($object === null) {
-			throw new \InvalidArgumentException('The object to build a hash code for must not be null');
+			throw new InvalidArgumentException('The object to build a hash code for must not be null');
 		}
-		$clazz = new \ReflectionClass($object);
+		$clazz = new ReflectionClass($object);
 		$builder = new HashCodeBuilder($initialNonZeroOddNumber, $multiplierNonZeroOddNumber);
 		return self::_reflectionHashCode($object, $clazz, $builder, $includeParents, $excludeFields,
 			$reflectUpToClass);
 	}
 
-	private static function _reflectionHashCode($object, \ReflectionClass $clazz, HashCodeBuilder $builder, $includeParents = true, array $excludeFields = array(), $reflectUpToClass = null) {
+	/**
+	 * @param                 $object
+	 * @param ReflectionClass $clazz
+	 * @param HashCodeBuilder $builder
+	 * @param bool            $includeParents
+	 * @param array           $excludeFields
+	 * @param string|null     $reflectUpToClass
+	 * @return int
+	 * @throws ReflectionException
+	 */
+	private static function _reflectionHashCode($object, ReflectionClass $clazz, HashCodeBuilder $builder, $includeParents = true, array $excludeFields = [], string $reflectUpToClass = null): int {
 		self::reflectionAppend($object, $clazz, $builder, $excludeFields);
 		if($includeParents) {
-			while(($parentClazz = $clazz->getParentClass()) !== false && $clazz->name !== $reflectUpToClass) {
-				self::log("traversing parent '{$parentClazz->name}' of '{$clazz->name}'" . PHP_EOL);
-				$clazz = $parentClazz;
-				self::reflectionAppend($object, $clazz, $builder, $excludeFields);
+			$localClazz = $clazz;
+			while(($parentClazz = $localClazz->getParentClass()) !== false && $localClazz->name !== $reflectUpToClass) {
+				self::log("traversing parent '{$parentClazz->name}' of '{$localClazz->name}'" . PHP_EOL);
+				$localClazz = $parentClazz;
+				self::reflectionAppend($object, $localClazz, $builder, $excludeFields);
 			}
 		}
-		self::$registry = array();
+		self::$registry = [];
 		return $builder->toHashCode();
 	}
 
 	/**
-	 * @param null|array|bool|int|double|float|object|\Traversable $value
+	 * @param null|array|bool|int|double|float|object|Traversable $value
 	 * @return $this
+	 * @throws ReflectionException
 	 */
-	public function append($value = null) {
+	public function append($value = null): self {
 		$oldTotal = $this->iTotal;
 		if($value === null) {
 			$this->appendNull();
@@ -139,7 +161,7 @@ class HashCodeBuilder {
 		if(is_object($value)) {
 			$this->appendObject($value);
 		}
-		if($value instanceof \Traversable || is_array($value)) {
+		if($value instanceof Traversable || is_array($value)) {
 			/** @noinspection ForeachSourceInspection */
 			foreach($value as $i => $iValue) {
 				$this->append($value[$i]);
@@ -156,61 +178,66 @@ class HashCodeBuilder {
 	 * @param bool $value the boolean to add to the <code>hashCode</code>
 	 * @return $this
 	 */
-	public function appendBoolean($value) {
+	public function appendBoolean(bool $value): self {
 		$this->_append($value === true ? 0 : 1);
 		return $this;
 	}
 
-	public function appendFloat($value) {
+	public function appendFloat(float $value) {
 		$this->_append(unpack('i', pack('f', $value))[1]);
 		return $this;
 	}
 
-	public function appendInt($value) {
+	public function appendInt(int $value) {
 		$this->_append($value);
 		return $this;
 	}
 
-	public function appendString($value) {
+	public function appendString(string $value) {
 		$this->_append(Utils::hashCode($value));
 		return $this;
 	}
 
-	private function _append($value) {
+	private function _append(int $value): void {
 		$oldTotal = $this->iTotal;
 		$this->iTotal = $oldTotal * $this->iConstant + $value;
 		self::log("{$this->iTotal} = $oldTotal  * {$this->iConstant} + $value" . PHP_EOL);
 	}
 
-	public function appendObject($value, $useReflection = true) {
+	/**
+	 * @param object|array $value
+	 * @param bool         $useReflection
+	 * @return $this
+	 * @throws ReflectionException
+	 */
+	public function appendObject($value, $useReflection = true): self {
 		if($value === null) {
 			$this->appendNull();
-		} else {
-			if(is_array($value)) {
-				foreach($value as $tmpValue) {
-					if(is_object($tmpValue)) {
-						$this->appendObject($tmpValue, $useReflection);
-					} else {
-						$this->append($tmpValue);
-					}
-				}
-			} else {
-				$reflectionClass = new \ReflectionClass($value);
-				if($reflectionClass->hasMethod('getHashCode')) {
-					$hashCode = $reflectionClass->getMethod('getHashCode')->invoke($value);
-				} else if($useReflection) {
-					$hashCode = self::_reflectionHashCode($value, new \ReflectionClass($value), $this);
+		} else if(is_array($value)) {
+			foreach($value as $tmpValue) {
+				if(is_object($tmpValue)) {
+					$this->appendObject($tmpValue, $useReflection);
 				} else {
-					$hashCode = Utils::hashCode(spl_object_hash($value));
+					$this->append($tmpValue);
 				}
-				$this->append($hashCode);
 			}
+		} else {
+			$reflectionClass = new ReflectionClass($value);
+			if($reflectionClass->hasMethod('getHashCode')) {
+				$hashCode = $reflectionClass->getMethod('getHashCode')->invoke($value);
+			} else if($useReflection) {
+				$hashCode = self::_reflectionHashCode($value, new ReflectionClass($value), $this);
+			} else {
+				$hashCode = Utils::hashCode(spl_object_hash($value));
+			}
+			$this->append($hashCode);
 		}
 		return $this;
 	}
 
-	public function appendNull() {
+	public function appendNull(): self {
 		$this->iTotal *= $this->iConstant;
+		return $this;
 	}
 
 	/**
@@ -218,11 +245,11 @@ class HashCodeBuilder {
 	 *
 	 * @return int <code>hashCode</code> based on the fields appended
 	 */
-	public function toHashCode() {
+	public function toHashCode(): int {
 		return $this->iTotal;
 	}
 
-	private static function log($message) {
+	private static function log($message): void {
 		if(self::$debug) {
 			fwrite(STDERR, $message);
 		}

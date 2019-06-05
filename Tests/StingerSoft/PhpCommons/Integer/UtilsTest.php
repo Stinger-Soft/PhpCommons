@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger PHP-Commons package.
@@ -11,12 +12,13 @@
 */
 namespace StingerSoft\PhpCommons\Integer;
 
+use PHPUnit\Framework\TestCase;
 use StingerSoft\PhpCommons\Integer\Utils;
 
-class UtilsTest extends \PHPUnit_Framework_TestCase {
+class UtilsTest extends TestCase {
 	
 	
-	public function testIntCmp() {
+	public function testIntCmp(): void {
 		$this->assertGreaterThan(0, Utils::intcmp(1, 0));
 		$this->assertLessThan(0, Utils::intcmp(0, 1));
 		$this->assertEquals(0, Utils::intcmp(0, 0));
