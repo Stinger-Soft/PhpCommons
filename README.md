@@ -21,6 +21,7 @@ Some common methods to ease the life of anonymous PHP developers
 
 ## Integer
 * **intcmp** Compares two integers (similarly to `strcmp`) and returns whether the first argument is smaller, less or equal to the second argument.
+* **isInteger** Checks if a given value can be interpreted as a "real" integer without commas or exponent parts (i.e. `1e10` is *not* treated as an integer).
 
 ## Formatter
 

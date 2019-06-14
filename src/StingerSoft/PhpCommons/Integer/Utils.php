@@ -29,4 +29,18 @@ class Utils {
 	public static function intcmp(?int $a, ?int $b): int {
 		return ($a - $b) ? ($a - $b) / abs($a - $b) : 0;
 	}
+
+	/**
+	 * Checks whether the given value can be interpreted as an integer.
+	 *
+	 * <code>is_int</code> does not work if not actually passing an integer.
+	 * <code>is_numeric</code> works for all numbers, such as floats, hex (< PHP7) and strings with exponent part (<code>1e10</code> for instance).
+	 *
+	 * @param mixed|null $value the value to check for if it can be interpreted as an integer
+	 * @return bool <code>true</code> in case the given value is an integer, <code>false</code> otherwise.
+	 */
+	public static function isInteger($value): bool {
+		$isInt = filter_var($value, FILTER_VALIDATE_INT);
+		return $isInt !== false;
+	}
 }
