@@ -1,10 +1,11 @@
 language: php
+os: linux
 
 cache:
     directories:
         - $HOME/.composer/cache
 
-matrix:
+jobs:
   include:
     - php: '7.2'
       env: COVERALLS=1 PHPVERSION=7.2

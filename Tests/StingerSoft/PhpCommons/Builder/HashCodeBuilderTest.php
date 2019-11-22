@@ -72,6 +72,7 @@ class HashCodeBuilderTest extends TestCase {
 	 * @throws ReflectionException
 	 */
 	public function testObject(): void {
+		HashCodeBuilder::setDebug(true);
 		$obj = null;
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->append($obj)->toHashCode());
@@ -84,6 +85,7 @@ class HashCodeBuilderTest extends TestCase {
 	 * @throws ReflectionException
 	 */
 	public function testObjectArray(): void {
+		HashCodeBuilder::setDebug(false);
 		$obj = [null];
 		$builder = new HashCodeBuilder(17, 37);
 		$this->assertEquals(17 * 37, $builder->append($obj)->toHashCode());

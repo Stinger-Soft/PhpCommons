@@ -24,6 +24,7 @@ class UtilsTest extends TestCase {
 		$this->assertTrue(Utils::startsWith('test', null));
 		$this->assertFalse(Utils::startsWith(null, 'test'));
 		$this->assertFalse(Utils::startsWith('testStartsWith', 'With'));
+		$this->assertTrue(Utils::startsWith(null, null));
 	}
 
 	public function testEndsWith(): void {
@@ -33,6 +34,7 @@ class UtilsTest extends TestCase {
 		$this->assertTrue(Utils::endsWith('With', null));
 		$this->assertFalse(Utils::endsWith(null, 'With'));
 		$this->assertFalse(Utils::endsWith('testStartsWith', 'test'));
+		$this->assertTrue(Utils::endsWith(null, null));
 	}
 
 	public function testCamelize(): void {

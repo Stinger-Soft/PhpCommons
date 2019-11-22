@@ -27,7 +27,7 @@ abstract class Utils {
 	 */
 	public static function startsWith(?string $haystack, ?string $needle): bool {
 		if($needle === null && $haystack === null) {
-			return false;
+			return true;
 		}
 		if($needle === null && $haystack !== null) {
 			return true;
@@ -69,43 +69,7 @@ abstract class Utils {
 	 * @return string
 	 */
 	public static function camelize($input, $separator = '_', $capitalizeFirstCharacter = false): string {
-		if(!defined('HHVM_VERSION') && version_compare(PHP_VERSION, '5.5.16') >= 0) {
-			return self::camelizeNewVersion($input, $separator, $capitalizeFirstCharacter);
-		}
-		return self::camelizeOldVersion($input, $separator, $capitalizeFirstCharacter);
-	}
-
-	/**
-	 * Uppercase the first character of each word in a string (PHP_VERSION bigger or equal than 5.5.16)
-	 *
-	 * @param string $input
-	 *            The string to be camelized
-	 * @param string $separator
-	 *            Each character after this string will be uppercased
-	 * @param bool   $capitalizeFirstCharacter
-	 * @return string
-	 */
-	protected static function camelizeNewVersion($input, $separator = '_', $capitalizeFirstCharacter = false): string {
 		$result = str_replace($separator, '', ucwords($input, $separator));
-		if(!$capitalizeFirstCharacter) {
-			$result = lcfirst($result);
-		}
-		return $result;
-	}
-
-	/**
-	 * Uppercase the first character of each word in a string (PHP_VERSION less than 5.5.16)
-	 *
-	 * @param string $input
-	 *            The string to be camelized
-	 * @param string $separator
-	 *            Each character after this string will be uppercased
-	 * @param bool   $capitalizeFirstCharacter
-	 * @return string
-	 */
-	protected static function camelizeOldVersion($input, $separator = '_', $capitalizeFirstCharacter = false): string {
-		$result = implode('', array_map('ucfirst', explode($separator, $input)));
-
 		if(!$capitalizeFirstCharacter) {
 			$result = lcfirst($result);
 		}
