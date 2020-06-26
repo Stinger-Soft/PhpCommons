@@ -173,6 +173,33 @@ abstract class Utils {
 	}
 
 	/**
+	 * Generates initials of the given string value.
+	 *
+	 * Every "first" character [a-Z] after a "stop" (whitespace, dot, dash etc.) character
+	 * is appended to the initials.
+	 *
+	 * Initials cannot be generated for numbers.
+	 *
+	 * @param string|null $value      the string value to generate the initials for
+	 * @param bool        $toUppercase
+	 *                                whether the characters of the initials shall be changed to upper case.
+	 * @return string|null the initials of the given value or null in case the given value was null.
+	 */
+	public static function initialize(?string $value, bool $toUppercase = true): ?string {
+		if($value === null) {
+			return null;
+		}
+		$expr = '/(?<=\b)[a-z]/i';
+		preg_match_all($expr, $value, $matches);
+		$letters = $matches[0];
+		if(count($letters)) {
+			$result = implode('', $matches[0]);
+			return $toUppercase ? strtoupper($result) : $result;
+		}
+		return $value;
+	}
+
+	/**
 	 * Get an integer based hash code of the given string.
 	 *
 	 * @param mixed $string the string to be hashed

@@ -104,4 +104,21 @@ class UtilsTest extends TestCase {
 
 		$this->assertEquals(-862545276, Utils::hashCode('Hello World'));
 	}
+
+	public function testInitialize() : void {
+		$this->assertEquals(null, Utils::initialize(null, false));
+		$this->assertEquals(null, Utils::initialize(null, true));
+		$this->assertEquals('', Utils::initialize(null, false));
+		$this->assertEquals('', Utils::initialize(null, true));
+		$this->assertEquals('125', Utils::initialize('125', false));
+		$this->assertEquals('125', Utils::initialize('125', true));
+		$this->assertEquals('Lid', Utils::initialize('Lorem ipsum dolor', false));
+		$this->assertEquals('LID', Utils::initialize('Lorem ipsum dolor', true));
+		$this->assertEquals('Lid', Utils::initialize('Lorem-ipsum-dolor', false));
+		$this->assertEquals('LID', Utils::initialize('Lorem-ipsum-dolor', true));
+		$this->assertEquals('Lid', Utils::initialize('Lorem.ipsum.dolor', false));
+		$this->assertEquals('LID', Utils::initialize('Lorem.ipsum.dolor', true));
+		$this->assertEquals('Lid', Utils::initialize('Lorem (ipsum) dolor', false));
+		$this->assertEquals('LID', Utils::initialize('Lorem (ipsum) dolor', true));
+	}
 }
