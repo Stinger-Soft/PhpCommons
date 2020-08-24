@@ -35,7 +35,7 @@ abstract class Utils {
 		if($needle !== null && $haystack === null) {
 			return false;
 		}
-		return $needle === '' || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+		return $needle === '' || mb_strrpos($haystack, $needle, -strlen($haystack)) !== false;
 	}
 
 	/**
@@ -55,7 +55,7 @@ abstract class Utils {
 		if($needle !== null && $haystack === null) {
 			return false;
 		}
-		return $needle === '' || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
+		return $needle === '' || (($temp = mb_strlen($haystack) - mb_strlen($needle)) >= 0 && mb_strpos($haystack, $needle, $temp) !== false);
 	}
 
 	/**
@@ -65,7 +65,7 @@ abstract class Utils {
 	 *            The string to be camelized
 	 * @param string $separator
 	 *            Each character after this string will be uppercased
-	 * @param bool   $capitalizeFirstCharacter
+	 * @param bool $capitalizeFirstCharacter
 	 * @return string
 	 */
 	public static function camelize($input, $separator = '_', $capitalizeFirstCharacter = false): string {
@@ -81,13 +81,13 @@ abstract class Utils {
 	 *
 	 * @see http://stackoverflow.com/a/1404151
 	 *
-	 * @param string       $text
+	 * @param string $text
 	 *            The text to extract the excerpt from
 	 * @param string|array $phrase
 	 *            The phrases to search for.
-	 * @param int          $radius
+	 * @param int $radius
 	 *            The radius in characters to be included in the excerpt
-	 * @param string       $ending
+	 * @param string $ending
 	 *            The string that should be appended after the excerpt
 	 * @return string The created excerpt
 	 */
@@ -96,14 +96,14 @@ abstract class Utils {
 			$phrase,
 		];
 
-		$phraseLen = strlen(implode(' ', $phrases));
-		if($radius < $phraseLen) {
+		$phraseLen = mb_strlen(implode(' ', $phrases));
+		if($phraseLen !== false && $radius < $phraseLen) {
 			$radius = $phraseLen;
 		}
 
 		$pos = 0;
 		foreach($phrases as $tmpPhrase) {
-			$pos = stripos($text, $tmpPhrase);
+			$pos = mb_stripos($text, $tmpPhrase);
 			if($pos > -1) {
 				break;
 			}
@@ -114,20 +114,20 @@ abstract class Utils {
 			$startPos = $pos - $radius;
 		}
 
-		$textLen = strlen($text);
+		$textLen = mb_strlen($text);
 
 		$endPos = $pos + $phraseLen + $radius;
 		if($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
 
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
+		$excerpt = mb_substr($text, $startPos, $endPos - $startPos);
 		if($startPos !== 0) {
-			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
+			$excerpt = self::mb_substr_replace($excerpt, $ending, 0, $phraseLen);
 		}
 
 		if($endPos !== $textLen) {
-			$excerpt = substr_replace($excerpt, $ending, -$phraseLen);
+			$excerpt = self::mb_substr_replace($excerpt, $ending, -$phraseLen);
 		}
 
 		return $excerpt;
@@ -156,11 +156,11 @@ abstract class Utils {
 	 *
 	 * @param string|null $value
 	 *            The string being truncated
-	 * @param int         $start
+	 * @param int $start
 	 *            The start position offset. Number of characters from the beginning of string. (First character is 0)
-	 * @param int         $max
+	 * @param int $max
 	 *            The width of the desired trim
-	 * @param string      $truncationSymbol
+	 * @param string $truncationSymbol
 	 *            A string that is added to the end of string when string is truncated
 	 * @return string
 	 */
@@ -180,8 +180,8 @@ abstract class Utils {
 	 *
 	 * Initials cannot be generated for numbers.
 	 *
-	 * @param string|null $value      the string value to generate the initials for
-	 * @param bool        $toUppercase
+	 * @param string|null $value the string value to generate the initials for
+	 * @param bool $toUppercase
 	 *                                whether the characters of the initials shall be changed to upper case.
 	 * @return string|null the initials of the given value or null in case the given value was null.
 	 */
@@ -215,6 +215,53 @@ abstract class Utils {
 			$h = self::overflow32(31 * $h + ord($string[$i]));
 		}
 		return $h;
+	}
+
+	/**
+	 *
+	 * https://gist.github.com/JBlond/942f17f629f22e810fe3
+	 *
+	 * @param string|string[] $string The input string.
+	 * @param string|string[] $replacement The replacement string.
+	 * @param int|int[] $start If start is positive, the replacing will begin at the start'th offset into string.  If start is negative, the replacing will begin at the start'th character from the end of string.
+	 * @param int|int[]|null $length If given and is positive, it represents the length of the portion of string which is to be replaced. If it is negative, it represents the number of characters from the end of string at which to stop replacing. If it is not given, then it will default to strlen( string ); i.e. end the replacing at the end of string. Of course, if length is zero then this function will have the effect of inserting replacement into string at the given start offset.
+	 * @return string|string[] The result string is returned. If string is an array then array is returned.
+	 */
+	public static function mb_substr_replace($string, $replacement, $start, ?int $length = null) {
+		if(is_array($string)) {
+			$num = count($string);
+			// $replacement
+			$replacement = is_array($replacement) ? array_slice($replacement, 0, $num) : array_pad(array($replacement), $num, $replacement);
+			// $start
+			if(is_array($start)) {
+				$start = array_slice($start, 0, $num);
+				foreach($start as $key => $value) {
+					$start[$key] = is_int($value) ? $value : 0;
+				}
+			} else {
+				$start = array_pad(array($start), $num, $start);
+			}
+			// $length
+			if(!isset($length)) {
+				$length = array_fill(0, $num, 0);
+			} elseif(is_array($length)) {
+				$length = array_slice($length, 0, $num);
+				foreach($length as $key => $value) {
+					$length[$key] = isset($value) ? (is_int($value) ? $value : $num) : 0;
+				}
+			} else {
+				$length = array_pad(array($length), $num, $length);
+			}
+			// Recursive call
+			return array_map(__FUNCTION__, $string, $replacement, $start, $length);
+		}
+		preg_match_all('/./us', (string)$string, $smatches);
+		preg_match_all('/./us', (string)$replacement, $rmatches);
+		if($length === null) {
+			$length = mb_strlen($string);
+		}
+		array_splice($smatches[0], $start, $length, $rmatches[0]);
+		return implode($smatches[0]);
 	}
 
 	private static function overflow32($v): int {
