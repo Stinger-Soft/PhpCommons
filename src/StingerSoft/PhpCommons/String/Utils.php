@@ -227,7 +227,7 @@ abstract class Utils {
 	 * @param int|int[]|null $length If given and is positive, it represents the length of the portion of string which is to be replaced. If it is negative, it represents the number of characters from the end of string at which to stop replacing. If it is not given, then it will default to strlen( string ); i.e. end the replacing at the end of string. Of course, if length is zero then this function will have the effect of inserting replacement into string at the given start offset.
 	 * @return string|string[] The result string is returned. If string is an array then array is returned.
 	 */
-	public static function mb_substr_replace($string, $replacement, $start, ?int $length = null) {
+	public static function mb_substr_replace($string, $replacement, $start, $length = null) {
 		if(is_array($string)) {
 			$num = count($string);
 			// $replacement
@@ -253,7 +253,7 @@ abstract class Utils {
 				$length = array_pad(array($length), $num, $length);
 			}
 			// Recursive call
-			return array_map(__FUNCTION__, $string, $replacement, $start, $length);
+			return array_map(self::class . '::' . __FUNCTION__, $string, $replacement, $start, $length);
 		}
 		preg_match_all('/./us', (string)$string, $smatches);
 		preg_match_all('/./us', (string)$replacement, $rmatches);
