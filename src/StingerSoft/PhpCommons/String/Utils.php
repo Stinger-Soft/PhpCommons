@@ -35,7 +35,7 @@ abstract class Utils {
 		if($needle !== null && $haystack === null) {
 			return false;
 		}
-		return $needle === '' || mb_strrpos($haystack, $needle, -strlen($haystack)) !== false;
+		return $needle === '' || mb_strrpos($haystack, $needle, -mb_strlen($haystack)) !== false;
 	}
 
 	/**
